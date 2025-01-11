@@ -1,0 +1,193 @@
+openapi: 3.0.0
+info:
+  title: The Kredi Bank Test API Documentation
+  version: "1.0"
+servers:
+  - url: http://localhost:{port}
+    variables:
+      port:
+        enum:
+          - "8000"
+          - "8080"
+        default: "8000"
+
+# Paths
+paths:
+  # User SignUp
+  /api/v1/auth/register:
+    post:
+      tags:
+        - Auth
+      summary: Register a New User
+      description: Endpoint to register a new user.
+      operationId: registerUser
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+                - firstName
+                - lastName
+                - password
+                - confirm_password
+              properties:
+                email:
+                  type: string
+                  format: email
+                firstName:
+                  type: string
+                middleName:
+                  type: string
+                lastName:
+                  type: string
+                password:
+                  type: string
+                  format: password
+                confirm_password:
+                  type: string
+                  format: password
+      responses:
+        "201":
+          description: User successfully registered.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  message:
+                    type: string
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                      email:
+                        type: string
+                        format: email
+                      firstName:
+                        type: string
+                      lastName:
+                        type: string
+  # Verify Email
+  /api/v1/auth/verify-email:
+    get:
+      tags:
+        - Auth
+      summary: Verify Email Address
+      description: Endpoint to verify a user's email address using the token sent to the email.
+      operationId: verifyEmail
+      parameters:
+        - in: query
+          name: email
+          required: true
+          schema:
+            type: string
+            format: email
+          description: The email address to verify.
+        - in: query
+          name: token
+          required: true
+          schema:
+            type: string
+          description: The token received in the email to verify the account.
+      responses:
+        "200":
+          description: Email successfully verified.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  message:
+                    type: string
+                  data:
+                    type: object
+
+  # Sign In
+  /api/v1/auth/signin:
+    post:
+      tags:
+        - Auth
+      summary: Sign In to the Application
+      description: Endpoint for user sign-in by providing email and password.
+      operationId: signin
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+                - password
+              properties:
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+                  format: password
+      responses:
+        "200":
+          description: User successfully signed in.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  message:
+                    type: string
+                  data:
+                    type: object
+                    properties:
+                      firstName:
+                        type: string
+                      lastName:
+                        type: string
+                      email:
+                        type: string
+                      accessToken:
+                        type: string
+
+  # Sign Out
+  /api/v1/auth/signout:
+    delete:
+      tags:
+        - Auth
+      summary: Sign Out from the Application
+      description: Endpoint for signing out by invalidating the user's token.
+      operationId: signout
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: User successfully signed out.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  message:
+                    type: string
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+
+tags:
+  - name: Auth

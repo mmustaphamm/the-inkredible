@@ -1,0 +1,25 @@
+const path = require("path");
+require("dotenv").config();
+
+// const config = process.env.NODE_ENV==="production" ? {
+//     config: path.resolve("dist", "config", "config.js"),
+//     "models-path": path.resolve("dist", "models"),
+//     "seeders-path": path.resolve("dist", "seeders"),
+//     "migrations-path": path.resolve("dist", "migrations"),
+// }
+// :
+// {
+//     config: path.resolve("src", "config", "config.ts"),
+//     "models-path": path.resolve("src", "models"),
+//     "seeders-path": path.resolve("src", "seeders"),
+//     "migrations-path": path.resolve("src", "migrations"),
+// };
+
+const config = {
+    config: path.resolve("dist", "config", "config.js"),
+    "models-path": path.resolve("dist", "models"),
+    "seeders-path": path.resolve("dist", "seeders"),
+    "migrations-path": path.resolve("dist", "migrations"),
+}
+
+module.exports = config;
