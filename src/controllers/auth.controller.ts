@@ -83,17 +83,17 @@ export class AuthController {
       }
 
       if (userExist.verified) {
-        return ResponseHandler.invalidRequest("user account already verified", null, res);
+        return ResponseHandler.invalidRequest("User account already verified", null, res);
       }
 
       if (String(token) !== userExist.authCode) {
-        return ResponseHandler.invalidRequest("invalid token", null, res);
+        return ResponseHandler.invalidRequest("Invalid token", null, res);
       }
 
       const isExpired = Date.now() > Number(userExist.authExp);
 
       if (isExpired) {
-        return ResponseHandler.invalidRequest("token has expired!", null, res);
+        return ResponseHandler.invalidRequest("Token has expired!", null, res);
       }
 
       userExist.verified = true;
@@ -171,7 +171,7 @@ export class AuthController {
   public async signoutUser(req: AuthenticatedRequest, res: Response) {
     try {
       const { id, email, role } = req.user;
-      const token = this.jwtService.generateAccessToken(id, email, role);
+      const token = this.jwtService.logoutUser(id, email, role);
 
       ResponseHandler.successResponse(
         "Logout Successful",

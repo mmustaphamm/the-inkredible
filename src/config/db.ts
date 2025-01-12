@@ -7,7 +7,7 @@ class DatabaseService {
     this.sequelize = sequelize;
   }
 
-  async dropAndSync() {
+  private async dropAndSync() {
     try {
       // await this.sequelize.drop();
       await this.sequelize.sync({ alter: true });
@@ -18,7 +18,7 @@ class DatabaseService {
     }
   }
 
-  async databaseConnection() {
+  public async databaseConnection() {
     try {
       // await this.dropAndSync();
       await this.sequelize.authenticate();
@@ -28,7 +28,7 @@ class DatabaseService {
     }
   }
 
-  async databaseConnectionShut() {
+  public async databaseConnectionShut() {
     try {
       await this.sequelize.close();
       console.log("Sequelize connection closed successfully.");

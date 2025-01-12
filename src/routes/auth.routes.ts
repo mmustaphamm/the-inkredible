@@ -1,6 +1,6 @@
-import { Application, NextFunction, Request, Response } from "express";
+import { Application, Request, Response } from "express";
 import { AuthController } from "../controllers/auth.controller";
-import customerAuth from "../middlewares/customer.middleware";
+import customerMiddleware from "../middlewares/customer.middleware";
 
 export class AuthRoutes {
   private authController: AuthController = new AuthController();
@@ -18,8 +18,12 @@ export class AuthRoutes {
       this.authController.signinUser(req, res);
     });
 
-    app.delete(`${basePath}/signout`, customerAuth.authenticate, (req: Request, res: Response) => {
-      this.authController.signoutUser(req, res);
-    });
+    app.delete(
+      `${basePath}/signout`,
+      customerMiddleware.authenticate,
+      (req: Request, res: Response) => {
+        this.authController.signoutUser(req, res);
+      }
+    );
   }
 }

@@ -1,6 +1,6 @@
 import { Model, DataTypes, Sequelize, ForeignKey, NonAttribute, CreationOptional } from "sequelize";
 import bcrypt from "bcrypt";
-import sequelize from ".";
+import sequelize from "./index";
 
 export interface UserAttributes {
   id?: number;
@@ -35,7 +35,7 @@ export default class User extends Model<UserAttributes, UserAttributes> implemen
 
   static associate(models: any) {
     // Add any associations here
-    User.belongsTo(models.Account, { foreignKey: "userId" });
+    User.hasOne(models.Account, { foreignKey: "userId", as: "account" });
   }
   toJSON() {
     const { password, ...values } = this.get() as { password?: string };

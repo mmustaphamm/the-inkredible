@@ -13,7 +13,7 @@ interface AccountAttributes {
 
 interface AccountCreationAttributes extends Optional<AccountAttributes, "id"> {}
 
-export class Account
+export default class Account
   extends Model<AccountAttributes, AccountCreationAttributes>
   implements AccountAttributes
 {
@@ -26,11 +26,10 @@ export class Account
   public readonly createdAt!: Date;
   public readonly updatedAt!: Date;
 
+  public static associations: {};
+
   static associate(models: any) {
-    Account.belongsTo(models.User, {
-      foreignKey: "userId",
-      as: "user",
-    });
+    Account.belongsTo(models.User, { foreignKey: "userId", as: "user" });
   }
 }
 Account.init(

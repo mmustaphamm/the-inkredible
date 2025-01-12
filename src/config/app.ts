@@ -2,23 +2,28 @@ import express, { Application, Request, Response } from "express";
 import dotenv from "dotenv";
 import cors from "cors";
 import DatabaseService from "./db";
-import { AuthRoutes } from "../routes/auth.routes";
 import YAML from "yamljs";
 import path from "path";
 import SwaggerUI from "swagger-ui-express";
+import { AuthRoutes } from "../routes/auth.routes";
+import RedisService from "../utils/redis";
+import { UserRoutes } from "../routes/user.routes";
 
 dotenv.config();
 
 class App {
   public app: Application;
   private dbSetup: DatabaseService = new DatabaseService();
+  private redisSetup = RedisService;
   private docs: any = YAML.load(path.join(__dirname, "../../src/docs.yaml"));
   //Routes Invocations
   private authRoute: AuthRoutes = new AuthRoutes();
+  private userRoutes: UserRoutes = new UserRoutes();
 
   constructor() {
     this.app = express();
     this.dbSetup.databaseConnection();
+    this.redisSetup;
     this.config();
     this.routes();
   }
@@ -38,6 +43,7 @@ class App {
 
   private routes(): void {
     this.authRoute.route("/api/v1/auth", this.app);
+    this.userRoutes.route("/api/v1/user", this.app);
 
     this.app.get("/", (req: Request, res: Response) => {
       res.status(200).json({

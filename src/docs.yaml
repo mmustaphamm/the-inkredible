@@ -181,6 +181,66 @@ paths:
                   message:
                     type: string
 
+  # Get Profile
+  /api/v1/user/profile:
+    get:
+      tags:
+        - User
+      summary: Get Profile
+      description: Endpoint to get user profile details with auth token.
+      operationId: getToken
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Profile successfully fetched.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  message:
+                    type: string
+                  data:
+                    type: object
+    # Update Profile
+    put:
+      tags:
+        - User
+      summary: Update Profile
+      description: Endpoint to update user profile details(Names) with auth token.
+      operationId: updateProfile
+      security:
+        - bearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                firstName:
+                  type: string
+                middleName:
+                  type: string
+                lastName:
+                  type: string
+      responses:
+        "200":
+          description: Profile successfully updated.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  message:
+                    type: string
+                  data:
+                    type: object
+
 components:
   securitySchemes:
     bearerAuth:

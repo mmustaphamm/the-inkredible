@@ -18,7 +18,7 @@ module.exports = {
         type: DataTypes.INTEGER,
         allowNull: false,
         references: {
-          model: "Users", // Assuming you have a Users table
+          model: "User",
           key: "id",
         },
         onUpdate: "CASCADE",

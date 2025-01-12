@@ -17,8 +17,8 @@ class CustomerAuth {
   ): Promise<void> => {
     try {
       const token = req.headers["authorization"] || req.headers["Authorization"];
-      const authUser = await this.jwtService.validateAccessToken(token as string);
-        console.log(authUser, "Logggggg")
+      const jwtToken = String(token).split(" ")[1];
+      const authUser = await this.jwtService.validateAccessToken(jwtToken);
       req.user = {
         id: authUser.id,
         email: authUser.email,
