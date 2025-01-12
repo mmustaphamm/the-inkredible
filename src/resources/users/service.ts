@@ -1,4 +1,3 @@
-import { IUser } from "./types";
 import User from "../../models/user";
 import Account from "../../models/account";
 import RedisService from "../../utils/redis";
@@ -24,20 +23,23 @@ export default class UserService {
 
   public async findUser(id: number): Promise<User> {
     const user = await RedisService.cacheAndGet(
-      Constants.CACHE_USER_PROFILE,
+      Constants.CACHE_USER_PROFILE + `_${String(id)}`,
       async () => {
-        let user = await User.findByPk(id);
+        let user = await User.findByPk(id, { raw: true });
         const account = await Account.findOne({
           where: {
             userId: id,
           },
+          raw: true,
         });
+        const { createdAt, updatedAt, authCode, authExp, password, verified, ...userData } = user;
+        const { userId, createdAt: accCreate, updatedAt: accUpdate, ...accountData } = account;
         return {
-          ...user.toJSON(),
-          account,
+          ...userData,
+          account: accountData,
         };
       },
-      36000 
+      36000
     );
 
     return user;
@@ -45,17 +47,20 @@ export default class UserService {
 
   public async cacheAfterUpdate(id: number): Promise<boolean> {
     const user = await RedisService.updateVal(
-      Constants.CACHE_USER_PROFILE,
+      Constants.CACHE_USER_PROFILE + `_${String(id)}`,
       async () => {
-        let user = await User.findByPk(id);
+        let user = await User.findByPk(id, { raw: true });
         const account = await Account.findOne({
           where: {
             userId: id,
           },
+          raw: true,
         });
+        const { createdAt, updatedAt, authCode, authExp, password, verified, ...userData } = user;
+        const { userId, createdAt: accCreate, updatedAt: accUpdate, ...accountData } = account;
         return {
-          ...user.toJSON(),
-          account,
+          ...userData,
+          account: accountData,
         };
       },
       36000 //10hrs

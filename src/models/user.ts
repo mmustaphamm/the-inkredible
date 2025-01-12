@@ -1,6 +1,7 @@
 import { Model, DataTypes, Sequelize, ForeignKey, NonAttribute, CreationOptional } from "sequelize";
 import bcrypt from "bcrypt";
 import sequelize from "./index";
+import JwtService from "../utils/jwt";
 
 export interface UserAttributes {
   id?: number;
@@ -95,18 +96,13 @@ User.init(
     timestamps: true,
     hooks: {
       beforeCreate: async (user: User) => {
-        user.password = await EncryptPass(user.password);
+        user.password = await JwtService.hashPasswords(user.password);
       },
       beforeUpdate: async (user: User) => {
         if (user.changed("password")) {
-          user.password = await EncryptPass(user.password);
+          user.password = await JwtService.hashPasswords(user.password);
         }
       },
     },
   }
 );
-
-async function EncryptPass(password: string): Promise<string> {
-  const saltRounds = process.env.HASH_SALT || "10"; // Default salt rounds if not provided
-  return await bcrypt.hash(password, Number(saltRounds));
-}

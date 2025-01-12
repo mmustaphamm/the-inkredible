@@ -28,8 +28,8 @@ npx sequelize-cli db:migrate
 
 Two users will be created.
 
-- The first `user1@example.com` with account balance `#100000`.
-- The second one as user `user2@example.com` with account balance `#200000`.
+- The first `user1@example.com` with account number: `userId.repeat(5)+"67890"` (example: if user id is 1, account number will be 1111167890. For seed data only). Account balance `#200000`.
+- The second one as user `user2@example.com` with account number: `userId.repeat(5)+"67890"`. Aaccount balance `#200000`.
 - Same password for both: `Asdf@1234`.
 
 ```bash

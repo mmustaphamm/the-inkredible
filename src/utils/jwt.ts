@@ -1,4 +1,5 @@
 import jwt from "jsonwebtoken";
+import bcrypt from "bcrypt";
 
 class JwtService {
   private readonly jwtSecret: string;
@@ -8,6 +9,16 @@ class JwtService {
 
     if (!this.jwtSecret) {
       throw new Error("JWT secret is not in the environment variables.");
+    }
+  }
+
+  public static async hashPasswords(password: string): Promise<string> {
+    try {
+      const saltRounds = process.env.HASH_SALT || 12;
+      const hash: string = await bcrypt.hash(password, Number(saltRounds));
+      return hash;
+    } catch (error: any) {
+      throw new Error("Error generating access token");
     }
   }
 
