@@ -1,10 +1,11 @@
 import { Sequelize } from "sequelize";
 import sequelize from "../models";
+import db from "../models";
 
 class DatabaseService {
   private sequelize: Sequelize;
   constructor() {
-    this.sequelize = sequelize;
+    this.sequelize = db.sequelize;
   }
 
   private async dropAndSync() {

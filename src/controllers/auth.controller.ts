@@ -63,9 +63,9 @@ export class AuthController {
         accountNumber: accountNo,
       };
       await this.accountService.createAccount(accountDto);
-      ResponseHandler.successfullyCreated("Sign Up Successful", newUser, res);
+      return ResponseHandler.successfullyCreated("Sign Up Successful", null, res);
     } catch (error) {
-      ResponseHandler.serverError(error.message, res);
+      return ResponseHandler.serverError(error.message, res);
     }
   }
 
@@ -101,9 +101,9 @@ export class AuthController {
       userExist.authExp = null;
 
       await userExist.save();
-      ResponseHandler.successResponse("Account Verification Successful", null, res);
+      return ResponseHandler.successResponse("Account Verification Successful", null, res);
     } catch (error) {
-      ResponseHandler.serverError(error.message, res);
+      return ResponseHandler.serverError(error.message, res);
     }
   }
 
@@ -153,7 +153,7 @@ export class AuthController {
         userExist.role
       );
 
-      ResponseHandler.successResponse(
+      return ResponseHandler.successResponse(
         "Login Successful",
         {
           firstName: userExist.firstName,
@@ -164,7 +164,7 @@ export class AuthController {
         res
       );
     } catch (error) {
-      ResponseHandler.serverError(error.message, res);
+      return ResponseHandler.serverError(error.message, res);
     }
   }
 
@@ -173,7 +173,7 @@ export class AuthController {
       const { id, email, role } = req.user;
       const token = this.jwtService.logoutUser(id, email, role);
 
-      ResponseHandler.successResponse(
+      return ResponseHandler.successResponse(
         "Logout Successful",
         {
           email,
@@ -182,7 +182,7 @@ export class AuthController {
         res
       );
     } catch (error) {
-      ResponseHandler.serverError(error.message, res);
+      return ResponseHandler.serverError(error.message, res);
     }
   }
 }

@@ -1,67 +1,96 @@
-import { Model, DataTypes, Sequelize, Optional } from "sequelize";
-import sequelize from ".";
+import {
+  Model,
+  DataTypes,
+  Sequelize,
+  CreationOptional,
+  ForeignKey,
+  InferAttributes,
+  InferCreationAttributes,
+  NonAttribute,
+} from "sequelize";
 
-interface AccountAttributes {
-  id: number;
-  accountNumber: string;
-  userId: number;
-  accountType: "savings" | "current";
-  balance: number;
-  createdAt?: Date;
-  updatedAt?: Date;
-}
+class Account extends Model<InferAttributes<Account>, InferCreationAttributes<Account>> {
+  declare id: CreationOptional<number>;
+  declare accountNumber: string;
+  declare userId: ForeignKey<number>;
+  declare accountType: "savings" | "current";
+  declare balance: number;
+  declare createdAt: CreationOptional<Date>;
+  declare updatedAt: CreationOptional<Date>;
 
-interface AccountCreationAttributes extends Optional<AccountAttributes, "id"> {}
-
-export default class Account
-  extends Model<AccountAttributes, AccountCreationAttributes>
-  implements AccountAttributes
-{
-  public id!: number;
-  public accountNumber!: string;
-  public userId!: number;
-  public accountType!: "savings" | "current";
-  public balance!: number;
-
-  public readonly createdAt!: Date;
-  public readonly updatedAt!: Date;
-
-  public static associations: {};
+  declare user?: NonAttribute<Model>;
+  declare sourceTransactions?: NonAttribute<Model[]>;
+  declare destinationTransactions?: NonAttribute<Model[]>;
 
   static associate(models: any) {
-    Account.belongsTo(models.User, { foreignKey: "userId", as: "user" });
+    Account.belongsTo(models.User, {
+      foreignKey: "userId",
+      as: "user",
+    });
+
+    Account.hasMany(models.Transaction, {
+      foreignKey: "sourceAccountId",
+      as: "sourceTransactions",
+      constraints: false,
+    });
+
+    Account.hasMany(models.Transaction, {
+      foreignKey: "destinationAccountId",
+      as: "destinationTransactions",
+      constraints: false,
+    });
   }
 }
-Account.init(
-  {
-    id: {
-      type: DataTypes.INTEGER,
-      primaryKey: true,
-      autoIncrement: true,
+
+export default (sequelize: Sequelize) => {
+  Account.init(
+    {
+      id: {
+        type: DataTypes.INTEGER,
+        primaryKey: true,
+        autoIncrement: true,
+      },
+      accountNumber: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        unique: true,
+      },
+      userId: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        references: {
+          model: "users",
+          key: "id",
+        },
+      },
+      accountType: {
+        type: DataTypes.ENUM("savings", "current"),
+        defaultValue: "savings",
+      },
+      balance: {
+        type: DataTypes.DECIMAL(15, 2),
+        allowNull: false,
+        defaultValue: 0.0,
+      },
+      createdAt: DataTypes.DATE,
+      updatedAt: DataTypes.DATE,
     },
-    accountNumber: {
-      type: DataTypes.STRING,
-      allowNull: false,
-      unique: true,
-    },
-    userId: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-    },
-    accountType: {
-      type: DataTypes.ENUM("savings", "current"),
-      defaultValue: "savings",
-    },
-    balance: {
-      type: DataTypes.FLOAT,
-      allowNull: false,
-      defaultValue: 0.0,
-    },
-  },
-  {
-    sequelize: sequelize,
-    modelName: "Account",
-    tableName: "accounts",
-    timestamps: true,
-  }
-);
+    {
+      sequelize,
+      modelName: "Account",
+      tableName: "accounts",
+      timestamps: true,
+      indexes: [
+        {
+          unique: true,
+          fields: ["accountNumber"],
+        },
+        {
+          fields: ["userId"],
+        },
+      ],
+    }
+  );
+
+  return Account;
+};

@@ -32,15 +32,25 @@ class RedisService {
       this.isClientReady = false;
       console.log("Redis client disconnected.");
     });
-
-    this.start();
   }
 
-  private async start() {
+  public async start() {
     try {
       await this.client.connect();
     } catch (err) {
       console.error("Failed to initialize Redis:", err);
+    }
+  }
+
+  public async getRedisClient(): Promise<RedisClientType> {
+    try {
+      if (!this.isClientReady) {
+        throw new Error("Redis client is not ready.");
+      }
+      return this.client;
+    } catch (error) {
+      console.error("Error retrieving Redis Instance:", error);
+      return null;
     }
   }
 

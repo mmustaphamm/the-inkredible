@@ -38,7 +38,7 @@ module.exports = {
       "accounts",
       insertedUsers[0].map((user: any) => ({
         userId: user.id,
-        accountNumber: `${String(user.id).repeat(5)}67890`,
+        accountNumber: `${user.id.toString().padStart(4, "0")}${Math.floor(100000 + Math.random() * 900000)}`,
         accountType: "savings",
         balance: 200000,
         createdAt: new Date(),
