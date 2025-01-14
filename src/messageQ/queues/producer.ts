@@ -3,7 +3,7 @@ import { Constants } from "../../config/constants";
 import { RedisClientType } from "redis";
 
 class QProducer {
-  private client: RedisClientType;
+  private client: RedisClientType | undefined;
 
   public async transactionProducer(data: any): Promise<string> {
     try {

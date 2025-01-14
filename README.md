@@ -29,8 +29,8 @@ npx sequelize-cli db:migrate
 Two users will be created.
 
 - The first `user1@example.com`. Account balance `#200000`.
-- The second one as user `user2@example.com`. Aaccount balance `#200000`.
-- Same password for both: `Asdf@1234`. 
+- The second `user2@example.com`. Account balance `#200000`.
+- Same password for both: `Asdf@1234`.
 - Query `api/v1/auth/user-accounts` to get account number(s) for test.
 
 ```bash
@@ -38,7 +38,9 @@ npx sequelize-cli db:seed:all
 ```
 
 ### 5&6
+
 - Migrate and Seed
+
 ```bash
 npm run db:ms
 ```

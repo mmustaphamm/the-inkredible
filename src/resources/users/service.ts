@@ -14,7 +14,7 @@ export default class UserService {
         where: { email },
       });
       return userExist;
-    } catch (error) {
+    } catch (error: any) {
       console.log(error);
       throw Error(error.message);
     }

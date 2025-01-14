@@ -64,7 +64,7 @@ export class AuthController {
       };
       await this.accountService.createAccount(accountDto);
       return ResponseHandler.successfullyCreated("Sign Up Successful", null, res);
-    } catch (error) {
+    } catch (error: any) {
       return ResponseHandler.serverError(error.message, res);
     }
   }
@@ -102,7 +102,7 @@ export class AuthController {
 
       await userExist.save();
       return ResponseHandler.successResponse("Account Verification Successful", null, res);
-    } catch (error) {
+    } catch (error: any) {
       return ResponseHandler.serverError(error.message, res);
     }
   }
@@ -163,7 +163,7 @@ export class AuthController {
         },
         res
       );
-    } catch (error) {
+    } catch (error: any) {
       return ResponseHandler.serverError(error.message, res);
     }
   }
@@ -181,7 +181,7 @@ export class AuthController {
         },
         res
       );
-    } catch (error) {
+    } catch (error: any) {
       return ResponseHandler.serverError(error.message, res);
     }
   }

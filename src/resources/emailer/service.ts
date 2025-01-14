@@ -33,7 +33,7 @@ class SendMail {
   }
 
   private async sendMsg(subject: string, html: string) {
-    const mailOptions = {
+    const mailOptions: any = {
       from: {
         name: process.env.MAIL_SENDER,
         address: this.sender,

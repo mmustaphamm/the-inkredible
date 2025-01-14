@@ -25,7 +25,7 @@ class CustomerAuth {
         role: authUser.role,
       };
       next();
-    } catch (error) {
+    } catch (error: any) {
       return ResponseHandler.invalidRequest(error.message, null, res);
     }
   };

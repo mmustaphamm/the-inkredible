@@ -10,7 +10,7 @@
     "start": "node dist/server.js",
     "db:ms": "npm run db:migrate && npm run db:seed",
     "db:migrate": "sequelize-cli db:migrate",
-    "db:migrate:undo": "npx sequelize-cli db:migrate:undo ",
+    "db:migrate:undo": "npx sequelize-cli db:migrate:undo",
     "db:migrate:undo:all": "npx sequelize-cli db:migrate:undo:all",
     "db:seed": "sequelize-cli db:seed:all --debug",
     "db:seed:undo": "sequelize-cli db:seed:undo:all --debug"

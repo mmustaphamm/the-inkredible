@@ -32,7 +32,7 @@ export class UserController {
 
       await this.userService.cacheAfterUpdate(newUser.id);
       return ResponseHandler.successResponse("User Update Successful", null, res);
-    } catch (error) {
+    } catch (error: any) {
       return ResponseHandler.serverError(error.message, res);
     }
   }
@@ -43,7 +43,7 @@ export class UserController {
       const user = await this.userService.findUser(claims.id);
 
       return ResponseHandler.successResponse("User profile fetched", user, res);
-    } catch (error) {
+    } catch (error: any) {
       return ResponseHandler.serverError(error.message, res);
     }
   }
@@ -53,7 +53,7 @@ export class UserController {
       const data = await this.userService.userAccounts();
 
       return ResponseHandler.successResponse("User Account Fetch Successful", data, res);
-    } catch (error) {
+    } catch (error: any) {
       return ResponseHandler.serverError(error.message, res);
     }
   }
@@ -64,7 +64,7 @@ export class UserController {
       const userAcc = await this.bankService.findUserAccount(accountNumber);
 
       return ResponseHandler.successResponse("User Account fetched", userAcc, res);
-    } catch (error) {
+    } catch (error: any) {
       return ResponseHandler.serverError(error.message, res);
     }
   }
@@ -109,7 +109,7 @@ export class UserController {
       await this.enQService.transactionProducer({ transId: createTrans.id, recId });
 
       return ResponseHandler.successResponse("Transaction being proccessed", null, res);
-    } catch (error) {
+    } catch (error: any) {
       return ResponseHandler.serverError(error.message, res);
     }
   }
@@ -117,10 +117,10 @@ export class UserController {
   public async getTransactionHis(req: AuthenticatedRequest, res: Response) {
     try {
       const userId = req.user.id;
-      const tranHist = await this.bankService.userTrasactioHistory(userId);
+      const tranHist = await this.bankService.userTrasactionHistory(userId);
 
       return ResponseHandler.successResponse("User Transactions fetched", tranHist, res);
-    } catch (error) {
+    } catch (error: any) {
       return ResponseHandler.serverError(error.message, res);
     }
   }

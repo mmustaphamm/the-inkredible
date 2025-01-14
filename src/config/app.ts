@@ -23,7 +23,7 @@ class App {
 
   constructor() {
     this.app = express();
-    this.initializeServices()
+    this.initializeServices();
     this.config();
     this.routes();
   }
@@ -44,7 +44,7 @@ class App {
       await this.dbSetup.databaseConnection();
       await this.initMessage();
     } catch (error) {
-      console.error('Error initializing services:', error);
+      console.error("Error initializing services:", error);
     }
   }
 

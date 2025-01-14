@@ -1,8 +1,11 @@
-import { Sequelize } from "sequelize";
 import db from "../../models";
 import { ITransaction } from "./types";
+import RedisService from "../../utils/redis";
+import { Constants } from "../../config/constants";
 
 export default class AccountService {
+  private redisService = RedisService;
+
   public async createAccount(data: any): Promise<typeof db.Account> {
     const account = await db.Account.create(data);
     return account;
@@ -40,11 +43,19 @@ export default class AccountService {
     return newTrans;
   }
 
-  public async userTrasactioHistory(userId: number): Promise<typeof db.Transaction> {
-    const newTrans = await db.Transaction.findAll({
-      where: { userId },
-    });
-    return newTrans;
+  public async userTrasactionHistory(userId: number): Promise<typeof db.Transaction> {
+    const allTrans = await this.redisService.cacheAndGet(
+      Constants.TRANSACTION_HISTORY_KEY + `_${String(userId)}`,
+      async () => {
+        const trans = await db.Transaction.findAll({
+          where: { userId },
+          order: [["createdAt", "DESC"]],
+        });
+        return trans;
+      },
+      180 //3minutes
+    );
+    return allTrans;
   }
 
   public async getTransactionById(id: number): Promise<typeof db.Transaction> {
@@ -68,7 +79,7 @@ export default class AccountService {
       await destinationAccount.save();
 
       return true;
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error executing transaction:", error.message);
       return false;
     }
@@ -79,7 +90,7 @@ export default class AccountService {
       let transaction = await this.getTransactionById(tid);
       transaction.status = "completed";
       await transaction.save();
-    }else {
+    } else {
       let transaction = await this.getTransactionById(tid);
       transaction.status = "failed";
       await transaction.save();

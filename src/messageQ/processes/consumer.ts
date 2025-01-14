@@ -7,7 +7,7 @@ import { ITransaction } from "../../resources/banking/types";
 import { Generate } from "../../utils/generate";
 
 class QConsumer {
-  private client: RedisClientType;
+  private client: RedisClientType | undefined;
   private userService: UserService = new UserService();
   private transactionService: TransactionService = new TransactionService();
   private generate: Generate = new Generate();
@@ -27,7 +27,7 @@ class QConsumer {
   //     }
   //   }
   // }
-  // THIS CANNOT WORK FINE ON THE SAME SERVER INSTANCE, EVENT LOOP IS BEING BLOCKED AS SOON AS IT STARTED. 
+  // THIS CANNOT WORK FINE ON THE SAME SERVER INSTANCE, EVENT LOOP IS BEING BLOCKED AS SOON AS IT STARTED.
   // A DEDICATED SERVER IS NEEDED TO EXECUTE CONSUMER PROPERLY, HOWEVERY, IT'S BETTER THAN PUB/SUB BECAUSE OF QUEUEING ABILITY.
 
   public async startConsumer() {
@@ -35,10 +35,10 @@ class QConsumer {
       this.client = await RedisService.getRedisClient();
       const subscriber = this.client.duplicate();
 
-      await subscriber.connect()
-      await subscriber.subscribe(Constants.TRANSACTION_MQ_KEY, async (message) =>{
-        await this.transactionConsumer(JSON.parse(message))
-      })
+      await subscriber.connect();
+      await subscriber.subscribe(Constants.TRANSACTION_MQ_KEY, async (message) => {
+        await this.transactionConsumer(JSON.parse(message));
+      });
     } catch (error) {
       console.error("Error initializing Redis subscriber:", error);
     }
@@ -47,14 +47,16 @@ class QConsumer {
   private async transactionConsumer(data: any): Promise<any> {
     try {
       const receiverDtls = await this.userService.userById(Number(data.recId));
-      const transactionDtls = await this.transactionService.getTransactionById(Number(data.transId));
+      const transactionDtls = await this.transactionService.getTransactionById(
+        Number(data.transId)
+      );
 
       //check source account and charge and credit the rec, if couldn't be charged, set to failed
       const exectrans = await this.transactionService.executeTransaction(transactionDtls);
 
       if (exectrans !== true) {
         await this.transactionService.finalizeSender(false, transactionDtls.id);
-        return
+        return;
       }
 
       await this.transactionService.finalizeSender(true, transactionDtls.id);
@@ -74,7 +76,7 @@ class QConsumer {
 
       await this.transactionService.createTransaction(receiverLedger);
       //then can send credit notification
-      return
+      return;
     } catch (error) {
       throw Error("Error processing transaction consumer");
     }
@@ -87,7 +89,7 @@ class QConsumer {
         await this.client.quit();
         console.log("Consumer stopped.");
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error stopping the consumer:", error.message);
       process.exit(1);
     }
